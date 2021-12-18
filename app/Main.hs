@@ -70,7 +70,6 @@ reemplazar poblacion hijos = take (length poblacion) ( hijos ++ poblacion)
 --creamos la función main, donde implementaremos el algoritmo genético
 main :: IO ()
 main = do
-
     let poblacion = generarIndividuos 10 --generamos la población inicial
     let poblacion = seleccion poblacion --ordenamos la población inicial
     let hijos = cruzar poblacion --generamos los hijos
