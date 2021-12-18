@@ -23,17 +23,19 @@ cruce :: Individuo -> Individuo -> Individuo
 cruce individuo1 individuo2 = Individuo ((gen individuo1 + gen individuo2)/2) (objetivo ((gen individuo1 + gen individuo2)/2) )--recordamos que debemos reevaluar el fitness del individuo cruzado
 --cruzar([individuos])=[individuos]
 
-cruzar ::   [Individuo]  ->Maybe [Individuo]--el 'a' nos permite que el compilador no intente inferir el tipo de la lista, dado que el compilador de haskell no permitiría usarlo
+cruzar ::   [Individuo]  -> [Individuo]--el 'a' nos permite que el compilador no intente inferir el tipo de la lista, dado que el compilador de haskell no permitiría usarlo
 cruzar poblacion
-  | length poblacion < 3 = Nothing --poblacion esta ordenada de mayor a menor fitness catMaybes :: [Maybe a] -> [a]
-  | uniformR(0::Float , 1::Float) > div 1 (round(length poblacion)) = Just (cruzar2 (head poblacion) (tail  poblacion) ++ (cruzar (tail poblacion)))
-  | otherwise = Just (cruzar (tail poblacion))
+  | length poblacion < 3 = generarIndividuos  1 --poblacion esta ordenada de mayor a menor fitness catMaybes :: [Maybe a] -> [a]
+  | uniformR(0::Float , 1::Float) > div 1 (round(length poblacion)) =  (cruzar2 (head poblacion) (tail  poblacion) ++ (cruzar (tail poblacion)))
+  | otherwise =  (cruzar (tail poblacion))
 
 
+test  :: Int -> Float
+test a = a
 
 
 cruzar2 :: Individuo -> [Individuo] -> [Individuo] --convertimos el resultado en una lista
-cruzar2 padre [poblacion]= singleton (cruce ((poblacion !! (randomRIO (0::Int , length poblacion ::Int)))  padre))
+cruzar2 padre [poblacion]= singleton (cruce (poblacion !! (randomR (0::Int , (length poblacion)-1 ::Int)) padre))
 
 
 
@@ -58,8 +60,8 @@ generarIndividuos n = map (\x -> Individuo (unsafePerformIO (randomRIO (-10, 10:
 --generamos una funcion que dadas dos listas de individuos, la primera de población original 
 --y la segunda de los hijos, devuelve una sola lista donde los elementos de hijos hayan reemplazado a los peores elementos de la poblacion original
 --NOTA: la lista de población original se encuentra ordenada en orden descendiente por fitness
-reemplazar :: [Individuo] -> Maybe [Individuo] -> [Individuo]
-reemplazar poblacion hijos = take (length poblacion) (catMaybes hijos ++ poblacion)
+reemplazar :: [Individuo] ->  [Individuo] -> [Individuo]
+reemplazar poblacion hijos = take (length poblacion) ( hijos ++ poblacion)
 
 --creamos la función main, donde implementaremos el algoritmo genético
 main :: IO ()
@@ -71,5 +73,3 @@ main = do
     poblacion <- return (reemplazar poblacion hijos) --reemplazamos los peores individuos de la población inicial por los hijos
     poblacion <- return (seleccion poblacion) --ordenamos la población
     print poblacion --imprimimos la población final
-
-
