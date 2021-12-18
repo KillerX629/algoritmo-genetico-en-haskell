@@ -7,6 +7,8 @@ import Data.List
 
 
 
+
+
 --definimos la estructura de individuo, que contendrá un valor flotante cómo gen y otro valor flotante como fitness
 data Individuo = Individuo {
     gen :: Float,
@@ -26,18 +28,17 @@ cruce individuo1 individuo2 = Individuo ((gen individuo1 + gen individuo2)/2) (o
 cruzar ::   [Individuo]  -> [Individuo]--el 'a' nos permite que el compilador no intente inferir el tipo de la lista, dado que el compilador de haskell no permitiría usarlo
 cruzar poblacion
   | length poblacion < 3 = generarIndividuos  1 --poblacion esta ordenada de mayor a menor fitness catMaybes :: [Maybe a] -> [a]
-  | uniformR(0::Float , 1::Float) > div 1 (round(length poblacion)) =  (cruzar2 (head poblacion) (tail  poblacion) ++ (cruzar (tail poblacion)))
+  | (unsafePerformIO(randomRIO( 0.0, 1.0 :: Float)))  > (1 / (fromIntegral(length poblacion)))=  (cruzar2 (head poblacion) (tail  poblacion) ++ (cruzar (tail poblacion)))
   | otherwise =  (cruzar (tail poblacion))
 
 
-test  :: Int -> Float
-test a = a
-
-
 cruzar2 :: Individuo -> [Individuo] -> [Individuo] --convertimos el resultado en una lista
-cruzar2 padre [poblacion]= singleton (cruce (poblacion !! (randomR (0::Int , (length poblacion)-1 ::Int)) padre))
+cruzar2 padre poblacion= singleton (cruce  padre(poblacion !! (unsafePerformIO(randomRIO (0 , ( length poblacion)-1 ::Int)))))
 
-
+proofOfSwitch :: Int -> Bool
+proofOfSwitch a 
+  | a == 1 = True
+  | otherwise = False
 
 --creamos la funcion seleccion, que recibe una lista de individuos y devuelve una lista de individuos ordenados por fitness
 seleccion :: [Individuo] -> [Individuo]
@@ -50,9 +51,12 @@ objetivo x = sin x * x
 
 
 
---generamos una funcion que genere N individuos aleatorios
+--generamos una funcion que genere N individuos aleatorios, calculando la función objetivo para el gen generado
 generarIndividuos :: Int -> [Individuo]
-generarIndividuos n = map (\x -> Individuo (unsafePerformIO (randomRIO (-10, 10::Float))) (objetivo (x gen))) [1..(round n)]
+generarIndividuos n = map (\x -> Individuo (x) (objetivo x)) (map (\x -> unsafePerformIO (randomRIO (-100.0, 100.0::Float))) [1..n])
+
+
+--generarIndividuos n = map (\x -> Individuo (unsafePerformIO (randomRIO (-10, 10::Float))) (objetivo (x gen))) n
 
 
 
