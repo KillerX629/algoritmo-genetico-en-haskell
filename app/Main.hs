@@ -7,12 +7,15 @@ import Data.List
 
 
 
-
-
 --definimos la estructura de individuo, que contendrá un valor flotante cómo gen y otro valor flotante como fitness
 data Individuo = Individuo {
     gen :: Float,
-    fitness :: Float} deriving (Show, Eq)
+    fitness :: Float} deriving (Eq)
+
+
+--derivamos la clase Show para que nos muestre el gen y el fitness de un individuo
+instance Show Individuo where
+    show (Individuo gen fitness) = "Gen: " ++ show gen ++ " Fitness: " ++ show fitness
 
 
 --creamos la funcion de mutación, que recibe un individuo y devuelve un individuo mutado
@@ -76,3 +79,13 @@ main = do
     poblacion <- return (reemplazar poblacion hijos) --reemplazamos los peores individuos de la población inicial por los hijos
     poblacion <- return (seleccion poblacion) --ordenamos la población
     print poblacion --imprimimos la población final
+    --ejecutamos el algoritmo N veces
+    forM_ [1..10] (\x -> do
+        let poblacion = seleccion poblacion
+        let hijos = cruzar poblacion
+        poblacion <- return (reemplazar poblacion hijos)
+        poblacion <- return (seleccion poblacion)
+        print poblacion)
+        
+        --esperamos que el usuario presione enter para continuar
+    getLine >> return ()
