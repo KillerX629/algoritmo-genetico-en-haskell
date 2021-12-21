@@ -84,7 +84,6 @@ main = do
     --mutamos a una parte de los hijos, en base a un número al azar
     let hijosMutados = mutar hijos
     print(hijosMutados)
-    print("hola")
     let hijosMutados12 = seleccion hijosMutados
     print("----- REEMPLAZO --------")
     let poblacion2 = (reemplazar poblacion hijosMutados12) --reemplazamos los peores individuos de la población inicial por los hijos
@@ -112,6 +111,30 @@ main = do
     let poblacion4 = (reemplazar poblacion3 hijosMutados32) --reemplazamos los peores individuos de la población inicial por los hijos
     poblacion4 <- return (seleccion poblacion4) --ordenamos la población
     print(poblacion4)
+    let hijos4 = cruzar poblacion4
+    print("----- CRUCE4 --------")
+    print(hijos4)
+    print("----- MUTACION4 --------")
+    let hijosMutados41 = mutar hijos4
+    print(hijosMutados41)
+    let hijosMutados42 = seleccion hijosMutados41
+    print("----- REEMPLAZO4 --------")
+    let poblacion5 = (reemplazar poblacion4 hijosMutados42) --reemplazamos los peores individuos de la población inicial por los hijos
+    poblacion5 <- return (seleccion poblacion5) --ordenamos la población
+    print(poblacion5)
+    --imprimimos el mejor individuo de cada generacion
+    print ("------ MEJORES INDIVIDUOS ------")
+    print("Generacion 0: ")
+    print(head poblacion)
+    print("Generacion 1: ")
+    print(head poblacion2)
+    print("Generacion 2: ")
+    print(head poblacion3)
+    print("Generacion 3: ")
+    print(head poblacion4)
+    print("Generacion 4: ")
+    print(head poblacion5)
+    print("------ FIN ------")
 
 
 {-
