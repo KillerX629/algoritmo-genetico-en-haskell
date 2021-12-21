@@ -15,7 +15,7 @@ data Individuo = Individuo {
 
 --derivamos la clase Show para que nos muestre el gen y el fitness de un individuo
 instance Show Individuo where
-    show (Individuo gen fitness) = "Gen: " ++ show gen ++ " Fitness: " ++ show fitness
+    show (Individuo gen fitness) = "Gen: " ++ show gen ++ " Fitness: " ++ show fitness ++"\n"
 
 
 --creamos la funcion de mutación, que recibe un individuo y devuelve un individuo mutado
@@ -83,7 +83,7 @@ main = do
 
     --ejecutamos el algoritmo N veces
     forM_ [1..10] (\x -> do
-        print("estamos en un ciclo for")
+        print("----- ITERACION " ++ show x ++ " --------")
         let mutable poblacion = seleccion poblacion
         let mutable hijos = cruzar poblacion
         poblacion <- return (reemplazar poblacion hijos)
