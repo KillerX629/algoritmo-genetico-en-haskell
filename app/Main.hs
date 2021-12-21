@@ -4,7 +4,7 @@ import System.IO.Unsafe
 import Control.Monad
 import Data.Maybe
 import Data.List
-
+import Control.Monad
 
 
 --definimos la estructura de individuo, que contendrá un valor flotante cómo gen y otro valor flotante como fitness
@@ -38,10 +38,6 @@ cruzar poblacion
 cruzar2 :: Individuo -> [Individuo] -> [Individuo] --convertimos el resultado en una lista
 cruzar2 padre poblacion= singleton (cruce  padre(poblacion !! (unsafePerformIO(randomRIO (0 , ( length poblacion)-1 ::Int)))))
 
-proofOfSwitch :: Int -> Bool
-proofOfSwitch a 
-  | a == 1 = True
-  | otherwise = False
 
 --creamos la funcion seleccion, que recibe una lista de individuos y devuelve una lista de individuos ordenados por fitness
 seleccion :: [Individuo] -> [Individuo]
@@ -74,18 +70,25 @@ reemplazar poblacion hijos = take (length poblacion) ( hijos ++ poblacion)
 main :: IO ()
 main = do
     let poblacion = generarIndividuos 10 --generamos la población inicial
-    let poblacion = seleccion poblacion --ordenamos la población inicial
+    print(poblacion)
+    -- ordenamos la poblacion inicial
+    let poblacionOrdenada = seleccion poblacion
+    print(poblacionOrdenada)
+    print("----- INTERMISION --------")
     let hijos = cruzar poblacion --generamos los hijos
+    print(hijos)
     poblacion <- return (reemplazar poblacion hijos) --reemplazamos los peores individuos de la población inicial por los hijos
+
     poblacion <- return (seleccion poblacion) --ordenamos la población
-    print poblacion --imprimimos la población final
+
     --ejecutamos el algoritmo N veces
     forM_ [1..10] (\x -> do
-        let poblacion = seleccion poblacion
-        let hijos = cruzar poblacion
+        print("estamos en un ciclo for")
+        let mutable poblacion = seleccion poblacion
+        let mutable hijos = cruzar poblacion
         poblacion <- return (reemplazar poblacion hijos)
         poblacion <- return (seleccion poblacion)
         print poblacion)
-        
         --esperamos que el usuario presione enter para continuar
-    getLine >> return ()
+        --finalizamos el ciclo for
+    
