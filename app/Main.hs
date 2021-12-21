@@ -23,6 +23,9 @@ instance Show Individuo where
 mutacion :: Individuo -> Individuo
 mutacion individuo = Individuo (gen individuo + (unsafePerformIO (randomRIO (-0.1, 0.1::Float)))  * gen individuo) (objetivo (gen individuo))--recordamos que debemos reevaluar el fitness del individuo mutado
 
+mutar :: [Individuo] -> [Individuo]
+mutar individuos = if (length individuos == 1) then individuos else(if (unsafePerformIO(randomRIO (0,1::Float)) >= 0.5) then (mutacion (head individuos)) : (mutar (tail individuos)) else (head individuos) : (mutar (tail individuos)))
+
 --creamos la funcion de cruce, que recibe dos individuos y devuelve un individuo cuyo gen es el promedio de los genes de los padres
 cruce :: Individuo -> Individuo -> Individuo
 cruce individuo1 individuo2 = Individuo ((gen individuo1 + gen individuo2)/2) (objetivo ((gen individuo1 + gen individuo2)/2) )--recordamos que debemos reevaluar el fitness del individuo cruzado
@@ -64,7 +67,7 @@ generarIndividuos n = map (\x -> Individuo (x) (objetivo x)) (map (\x -> unsafeP
 --y la segunda de los hijos, devuelve una sola lista donde los elementos de hijos hayan reemplazado a los peores elementos de la poblacion original
 --NOTA: la lista de población original se encuentra ordenada en orden descendiente por fitness
 reemplazar :: [Individuo] ->  [Individuo] -> [Individuo]
-reemplazar poblacion hijos = take (length poblacion) ( hijos ++ poblacion)
+reemplazar poblacion hijos = take (div (length poblacion)2) ( hijos)  ++ take (div (length poblacion)2) (poblacion)
 
 --creamos la función main, donde implementaremos el algoritmo genético
 main :: IO ()
@@ -74,13 +77,44 @@ main = do
     -- ordenamos la poblacion inicial
     let poblacionOrdenada = seleccion poblacion
     print(poblacionOrdenada)
-    print("----- INTERMISION --------")
+    print("----- CRUCE --------")
     let hijos = cruzar poblacion --generamos los hijos
     print(hijos)
-    poblacion <- return (reemplazar poblacion hijos) --reemplazamos los peores individuos de la población inicial por los hijos
+    print("----- MUTACION --------")
+    --mutamos a una parte de los hijos, en base a un número al azar
+    let hijosMutados = mutar hijos
+    print(hijosMutados)
+    print("hola")
+    let hijosMutados12 = seleccion hijosMutados
+    print("----- REEMPLAZO --------")
+    let poblacion2 = (reemplazar poblacion hijosMutados12) --reemplazamos los peores individuos de la población inicial por los hijos
+    poblacion2 <- return (seleccion poblacion2) --ordenamos la población
+    print(poblacion2)
+    let hijos2 = cruzar poblacion2
+    print("----- CRUCE2 --------")
+    print(hijos2)
+    print("----- MUTACION2 --------")
+    let hijosMutados21 = mutar hijos2
+    print(hijosMutados21)
+    let hijosMutados22 = seleccion hijosMutados21
+    print("----- REEMPLAZO2 --------")
+    let poblacion3 = (reemplazar poblacion2 hijosMutados22) --reemplazamos los peores individuos de la población inicial por los hijos
+    poblacion3 <- return (seleccion poblacion3) --ordenamos la población
+    print(poblacion3)
+    let hijos3 = cruzar poblacion3
+    print("----- CRUCE3 --------")
+    print(hijos3)
+    print("----- MUTACION3 --------")
+    let hijosMutados31 = mutar hijos3
+    print(hijosMutados31)
+    let hijosMutados32 = seleccion hijosMutados31
+    print("----- REEMPLAZO3 --------")
+    let poblacion4 = (reemplazar poblacion3 hijosMutados32) --reemplazamos los peores individuos de la población inicial por los hijos
+    poblacion4 <- return (seleccion poblacion4) --ordenamos la población
+    print(poblacion4)
 
-    poblacion <- return (seleccion poblacion) --ordenamos la población
 
+{-
     --ejecutamos el algoritmo N veces
     forM_ [1..10] (\x -> do
         print("----- ITERACION " ++ show x ++ " --------")
@@ -88,7 +122,8 @@ main = do
         let mutable hijos = cruzar poblacion
         poblacion <- return (reemplazar poblacion hijos)
         poblacion <- return (seleccion poblacion)
-        print poblacion)
+        print (seleccion poblacion))
         --esperamos que el usuario presione enter para continuar
         --finalizamos el ciclo for
     
+-}
